@@ -4,16 +4,19 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,8 +27,6 @@ import java.util.Comparator;
 import java.util.List;
 
 public class MaxLauncherFragment extends Fragment {
-
-    private static final String TAG = "MaxLauncherFragment";
 
     private RecyclerView mRecyclerView;
 
@@ -43,6 +44,7 @@ public class MaxLauncherFragment extends Fragment {
 
         mRecyclerView = (RecyclerView) v.findViewById(R.id.app_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         setupAdapter();
 
         return v;
@@ -67,25 +69,37 @@ public class MaxLauncherFragment extends Fragment {
         });
 
         mRecyclerView.setAdapter(new ActivityAdapter(activities));
-
-        Log.i(TAG, "Found " + activities.size() + " activities.");
+        int count = activities.size();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar()
+                .setSubtitle(getResources().getQuantityString(R.plurals.subtitle_app_quantity, count, count));
     }
 
     private class ActivityHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ResolveInfo mResolveInfo;
+        private ImageView mIconImageView;
         private TextView mNameTextView;
+        private TextView mSizeTextView;
 
         public ActivityHolder(View itemView) {
             super(itemView);
-            mNameTextView = (TextView) itemView;
-            mNameTextView.setOnClickListener(this);
+
+            mIconImageView = (ImageView) itemView.findViewById(R.id.app_icon_view);
+            mNameTextView = (TextView) itemView.findViewById(R.id.app_name_view);
+            mSizeTextView = (TextView) itemView.findViewById(R.id.app_size_view);
+
+            itemView.setOnClickListener(this);
         }
 
         public void bindActivity(ResolveInfo resolveInfo) {
             mResolveInfo = resolveInfo;
             PackageManager packageManager = getActivity().getPackageManager();
+            Drawable appIcon = mResolveInfo.loadIcon(packageManager);
+            mIconImageView.setImageDrawable(appIcon);
             String appName = mResolveInfo.loadLabel(packageManager).toString();
             mNameTextView.setText(appName);
+            String appSize = ApplicationUtils.formatSize(ApplicationUtils.getAplicationSize(mResolveInfo));
+            mSizeTextView.setText(appSize);
         }
 
         @Override
@@ -112,7 +126,7 @@ public class MaxLauncherFragment extends Fragment {
         @Override
         public ActivityHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            View view = layoutInflater.inflate(R.layout.activity_item_list, parent, false);
 
             return new ActivityHolder(view);
         }
