@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.maxclub.android.maxlauncher">
 
-    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE"/>
-
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />

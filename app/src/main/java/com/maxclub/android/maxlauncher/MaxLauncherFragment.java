@@ -99,7 +99,7 @@ public class MaxLauncherFragment extends Fragment {
             mIconImageView.setImageDrawable(appIcon); */
             String appName = mResolveInfo.loadLabel(packageManager).toString();
             mNameTextView.setText(appName);
-            String appSize = AppDetails.formatSize(AppDetails.getApplicationSize(mResolveInfo));
+            String appSize = AppDetails.formatSize(AppDetails.getApkSize(mResolveInfo));
             mSizeTextView.setText(appSize);
         }
 

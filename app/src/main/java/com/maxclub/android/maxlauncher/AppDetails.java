@@ -6,7 +6,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 
 public class AppDetails {
-    public static long getApplicationSize(ResolveInfo resolveInfo) {
+    public static long getApkSize(ResolveInfo resolveInfo) {
         return new File(resolveInfo.activityInfo.applicationInfo.publicSourceDir).length();
     }
 
