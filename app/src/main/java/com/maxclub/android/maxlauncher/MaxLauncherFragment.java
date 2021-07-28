@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -94,11 +94,12 @@ public class MaxLauncherFragment extends Fragment {
         public void bindActivity(ResolveInfo resolveInfo) {
             mResolveInfo = resolveInfo;
             PackageManager packageManager = getActivity().getPackageManager();
-            Drawable appIcon = mResolveInfo.loadIcon(packageManager);
-            mIconImageView.setImageDrawable(appIcon);
+            new AppIconAsuncTask().execute(packageManager);
+            /* Drawable appIcon = mResolveInfo.loadIcon(packageManager);
+            mIconImageView.setImageDrawable(appIcon); */
             String appName = mResolveInfo.loadLabel(packageManager).toString();
             mNameTextView.setText(appName);
-            String appSize = ApplicationUtils.formatSize(ApplicationUtils.getAplicationSize(mResolveInfo));
+            String appSize = AppDetails.formatSize(AppDetails.getApplicationSize(mResolveInfo));
             mSizeTextView.setText(appSize);
         }
 
@@ -111,6 +112,20 @@ public class MaxLauncherFragment extends Fragment {
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             startActivity(intent);
+        }
+
+        private class AppIconAsuncTask extends AsyncTask<PackageManager, Void, Drawable> {
+
+            @Override
+            protected Drawable doInBackground(PackageManager... packageManagers) {
+                return mResolveInfo.loadIcon(packageManagers[0]);
+            }
+
+            @Override
+            protected void onPostExecute(Drawable drawable) {
+                super.onPostExecute(drawable);
+                mIconImageView.setImageDrawable(drawable);
+            }
         }
     }
 
