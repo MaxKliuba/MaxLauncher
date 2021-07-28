@@ -5,8 +5,8 @@ import android.content.pm.ResolveInfo;
 import java.io.File;
 import java.text.DecimalFormat;
 
-public class ApplicationUtils {
-    public static long getAplicationSize(ResolveInfo resolveInfo) {
+public class AppDetails {
+    public static long getApplicationSize(ResolveInfo resolveInfo) {
         return new File(resolveInfo.activityInfo.applicationInfo.publicSourceDir).length();
     }
 
@@ -15,13 +15,8 @@ public class ApplicationUtils {
             return "0 B";
         }
 
-        final String[] units = new String[]{
-                "B",
-                "KB",
-                "MB",
-                "GB",
-                "TB"
-        };
+        final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
+
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         String formattedSize = new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups));
 
